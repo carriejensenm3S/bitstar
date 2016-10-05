@@ -14,6 +14,9 @@
 #include <cstring>
 #include <cstdio>
 
+#include <iostream>
+#include <stdio.h>
+
 #include <boost/type_traits/is_fundamental.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
@@ -172,10 +175,12 @@ void LogStackTrace();
 //
 inline unsigned int GetSizeOfCompactSize(uint64 nSize)
 {
-    if (nSize < 253)             return sizeof(unsigned char);
-    else if (nSize <= std::numeric_limits<unsigned short>::max()) return sizeof(unsigned char) + sizeof(unsigned short);
-    else if (nSize <= std::numeric_limits<unsigned int>::max())  return sizeof(unsigned char) + sizeof(unsigned int);
-    else                         return sizeof(unsigned char) + sizeof(uint64);
+    unsigned int max_unsigned_int_size = 4294967295;
+    if (nSize < 253)   max_unsigned_int_size = sizeof(unsigned char);
+    else if (nSize <=  max_unsigned_int_size) max_unsigned_int_size =  sizeof(unsigned char) + sizeof(unsigned short);
+    else if (nSize <=  max_unsigned_int_size) max_unsigned_int_size = sizeof(unsigned char) + sizeof(unsigned int);
+    else                         max_unsigned_int_size = sizeof(unsigned char) + sizeof(uint64);
+    return max_unsigned_int_size;
 }
 
 template<typename Stream>
@@ -824,18 +829,7 @@ public:
             vch.insert(it, first, last);
     }
 
-    void insert(iterator it, std::vector<char>::const_iterator first, std::vector<char>::const_iterator last)
-    {
-        assert(last - first >= 0);
-        if (it == vch.begin() + nReadPos && (unsigned int)(last - first) <= nReadPos)
-        {
-            // special case for inserting at the front when there's room
-            nReadPos -= (last - first);
-            memcpy(&vch[nReadPos], &first[0], last - first);
-        }
-        else
-            vch.insert(it, first, last);
-    }
+
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1300
     void insert(iterator it, const char* first, const char* last)

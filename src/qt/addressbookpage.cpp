@@ -10,8 +10,8 @@
 
 #include <QSortFilterProxyModel>
 #include <QClipboard>
-#include <QMessageBox>
-#include <QMenu>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QMenu>
 
 #ifdef USE_QRCODE
 #include "qrcodedialog.h"
