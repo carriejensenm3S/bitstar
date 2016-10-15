@@ -3,12 +3,10 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "walletdb.h"
-#include "wallet.h"
-#include "key.h"
+#include "walletdb1.h"
+#include "wallet1.h"
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
-#include "util.h"
 
 using namespace std;
 using namespace boost;
@@ -281,7 +279,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
                 ssValue >> wkey;
                 pkey = wkey.vchPrivKey;
             }
-            if (!key.SetPrivKey(pkey))
+            if (!key.SetPrivKey(pkey, vchPubKey.IsCompressed()))
             {
                 strErr = "Error reading wallet database: CPrivKey corrupt";
                 return false;

@@ -677,7 +677,7 @@ bool AppInit2()
     uiInterface.InitMessage(_("Loading block index..."));
     printf("Loading block index...\n");
     nStart = GetTimeMillis();
-    if (!LoadBlockIndex())
+    if (!LoadBlockIndex(false))
         return InitError(_("Error loading blkindex.dat"));
 
     // as LoadBlockIndex can take several minutes, it's possible the user
@@ -812,7 +812,7 @@ bool AppInit2()
         {
             FILE *file = fopen(strFile.c_str(), "rb");
             if (file)
-                LoadExternalBlockFile(file);
+                LoadExternalBlockFile(file, NULL);
         }
     }
 
@@ -823,7 +823,7 @@ bool AppInit2()
         FILE *file = fopen(pathBootstrap.string().c_str(), "rb");
         if (file) {
             filesystem::path pathBootstrapOld = GetDataDir() / "bootstrap.dat.old";
-            LoadExternalBlockFile(file);
+            LoadExternalBlockFile(file, NULL);
             RenameOver(pathBootstrap, pathBootstrapOld);
         }
     }

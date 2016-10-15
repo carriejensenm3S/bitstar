@@ -101,6 +101,7 @@ xCXXFLAGS=-O2 -msse2 -pthread -Wall -Wextra -Wformat -Wformat-security -Wno-unus
 xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
+    obj/auxpow.o \
     obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \

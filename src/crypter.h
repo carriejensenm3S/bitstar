@@ -6,7 +6,7 @@
 
 #include "allocators.h" /* for SecureString */
 #include "key.h"
-#include "serialize.h"
+#include "auxpow/serialize1.h"
 
 const unsigned int WALLET_CRYPTO_KEY_SIZE = 32;
 const unsigned int WALLET_CRYPTO_SALT_SIZE = 8;

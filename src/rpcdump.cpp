@@ -5,6 +5,7 @@
 #include "init.h" // for pwalletMain
 #include "bitcoinrpc.h"
 #include "ui_interface.h"
+#include "wallet.h"
 #include "base58.h"
 
 #include <boost/lexical_cast.hpp>
@@ -89,7 +90,7 @@ Value dumpprivkey(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to a key");
     CSecret vchSecret;
     bool fCompressed;
-    if (!pwalletMain->GetSecret(keyID, vchSecret, fCompressed))
-        throw JSONRPCError(RPC_WALLET_ERROR, "Private key for address " + strAddress + " is not known");
+/*    if (!pwalletMain->GetSecret(keyID, vchSecret, fCompressed))
+        throw JSONRPCError(RPC_WALLET_ERROR, "Private key for address " + strAddress + " is not known");*/
     return CBitcoinSecret(vchSecret, fCompressed).ToString();
 }

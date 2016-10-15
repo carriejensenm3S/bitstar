@@ -9,11 +9,11 @@
 class CAuxPow : public CMerkleTx
 {
 public:
-    CAuxPow(int algo_, const CTransaction& txIn) : CMerkleTx(txIn), algo(algo_)
+    CAuxPow(const CTransaction& txIn) : CMerkleTx(txIn)
     {
     }
 
-    CAuxPow(int algo_) : CMerkleTx(), algo(algo_)
+    CAuxPow() :CMerkleTx()
     {
     }
 
@@ -21,9 +21,8 @@ public:
     // root must be present inside the coinbase
     std::vector<uint256> vChainMerkleBranch;
     // Index of chain in chains merkle tree
-    int nChainIndex;
-    CBlock parentBlock;
-    int algo;
+    unsigned int nChainIndex;
+    CBlockHeader parentBlockHeader;
 
     IMPLEMENT_SERIALIZE
     (
@@ -34,14 +33,14 @@ public:
 
         // Always serialize the saved parent block as header so that the size of CAuxPow
         // is consistent.
-        nSerSize += SerReadWrite(s, parentBlock, nType | SER_BLOCKHEADERONLY, nVersion, ser_action);
+        nSerSize += SerReadWrite(s, parentBlockHeader, nType, nVersion, ser_action);
     )
 
-    bool Check(uint256 hashAuxBlock, int nChainID, int nHeight);
+    bool Check(uint256 hashAuxBlock, int nChainID);
 
     uint256 GetParentBlockHash()
     {
-        return parentBlock.GetPoWHash(algo);
+        return parentBlockHeader.GetPoWHash();
     }
 };
 
@@ -70,7 +69,7 @@ int ReadWriteAuxPow(Stream& s, boost::shared_ptr<CAuxPow>& auxpow, int nType, in
 {
     if (nVersion & BLOCK_VERSION_AUXPOW)
     {
-        auxpow.reset(new CAuxPow(GetAlgo(nVersion)));
+        auxpow.reset(new CAuxPow());
         return SerReadWrite(s, *auxpow, nType, nVersion, ser_action);
     }
     else
@@ -82,5 +81,4 @@ int ReadWriteAuxPow(Stream& s, boost::shared_ptr<CAuxPow>& auxpow, int nType, in
 
 extern void RemoveMergedMiningHeader(std::vector<unsigned char>& vchAux);
 extern CScript MakeCoinbaseWithAux(unsigned int nBits, unsigned int nExtraNonce, std::vector<unsigned char>& vchAux);
-
 #endif

@@ -92,8 +92,17 @@ public:
     bool IsCompressed() const {
         return vchPubKey.size() == 33;
     }
-
-    std::vector<unsigned char> Raw() const {
+    int size() const {
+        return vchPubKey.size();
+    }
+   const unsigned char*  begin() const {
+        return &*vchPubKey.begin();
+    }
+   const unsigned char*  end() const {
+        return &*vchPubKey.end();
+    }
+   
+   std::vector<unsigned char> Raw() const {
         return vchPubKey;
     }
 };
@@ -137,6 +146,13 @@ public:
     bool SetPubKey(const CPubKey& vchPubKey);
     CPubKey GetPubKey() const;
 
+
+   const unsigned char*  begin() const {
+        return &*GetPubKey().begin();
+    }
+   const unsigned char*  end() const {
+        return &*GetPubKey().end();
+    }
     bool Sign(uint256 hash, std::vector<unsigned char>& vchSig);
 
     // create a compact signature (65 bytes), which allows reconstructing the used public key
