@@ -3,19 +3,14 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef PPCOIN_KERNEL_H
 #define PPCOIN_KERNEL_H
-
 #include "main.h"
-
-
 
 extern unsigned int nModifierInterval;
 extern unsigned int nModifierIntervalNew;
-
-
-unsigned int nProtocolMinStakeAgeSwitchTestTime     = 1402696581;   // minstake age switch start time GMT for testnet - change! changed
-unsigned int nProtocolMinStakeAgeSwitchTime         = 1403283600;   // minstake age switch start time GMT for production net - change! 20140610T1827 ! changed
-int nProtocolModifierSwitchHeight 			= 185000;
-int nProtocolModifierSwitchTestHeight 		= 185000;
+extern unsigned int nProtocolMinStakeAgeSwitchTestTime;
+extern unsigned int nProtocolMinStakeAgeSwitchTime;  
+extern unsigned int nProtocolModifierSwitchTestHeight;
+extern unsigned int nProtocolModifierSwitchTestHeight;
 
 
 // MODIFIER_INTERVAL: time to elapse before new modifier is computed
@@ -23,25 +18,13 @@ static const unsigned int MODIFIER_INTERVAL = 6 * 60 * 60;
 static const unsigned int MODIFIER_INTERVAL_NEW = 1* 60; // new modifier interval 1 minute
 
 
-// Modifier interval: time to elapse before new modifier is computed
-// Set to 3-hour for production network and 20-minute for test network
-
-unsigned int nModifierInterval = MODIFIER_INTERVAL;
-unsigned int nModifierIntervalNew = MODIFIER_INTERVAL_NEW;
-
-
-bool IsProtocolMinStakeAgeChange(unsigned int nTimeCoinStake)
-{
-
-    return (nTimeCoinStake >= (fTestNet? nProtocolMinStakeAgeSwitchTestTime : nProtocolMinStakeAgeSwitchTime));
-}
+extern bool IsProtocolMinStakeAgeChange(unsigned int nTimeCoinStake);
 
 // MODIFIER_INTERVAL_RATIO:
 // ratio of group interval length between the last group and the first group
 static const int MODIFIER_INTERVAL_RATIO = 3;
 
 
-bool IsProtocolMinStakeAgeChange(unsigned int nTimeCoinStake);
 
 // Compute the hash modifier for proof-of-stake
 bool ComputeNextStakeModifier(const CBlockIndex* pindexPrev, uint64& nStakeModifier, bool& fGeneratedStakeModifier);

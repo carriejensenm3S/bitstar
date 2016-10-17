@@ -8,6 +8,7 @@
 #include "net.h"
 #include "init.h"
 #include "util.h"
+#include "main.h"
 #include "ui_interface.h"
 #include "checkpoints.h"
 #include <boost/filesystem.hpp>
@@ -812,7 +813,7 @@ bool AppInit2()
         {
             FILE *file = fopen(strFile.c_str(), "rb");
             if (file)
-                LoadExternalBlockFile(file, NULL);
+                LoadExternalBlockFile(file);
         }
     }
 
@@ -823,7 +824,7 @@ bool AppInit2()
         FILE *file = fopen(pathBootstrap.string().c_str(), "rb");
         if (file) {
             filesystem::path pathBootstrapOld = GetDataDir() / "bootstrap.dat.old";
-            LoadExternalBlockFile(file, NULL);
+            LoadExternalBlockFile(file);
             RenameOver(pathBootstrap, pathBootstrapOld);
         }
     }

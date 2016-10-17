@@ -147,6 +147,9 @@ public:
     // Adds a key to the store, without saving it to disk (used by LoadWallet)
     bool LoadKey(const CKey& key, const CPubKey &pubkey) { return CCryptoKeyStore::AddKeyPubKey(key, pubkey); }
 
+    // Adds a key to the store, without saving it to disk (used by LoadWallet)
+    bool LoadKey(const CKey& key) { return CCryptoKeyStore::AddKey(key); }
+
     bool LoadMinVersion(int nVersion) { nWalletVersion = nVersion; nWalletMaxVersion = std::max(nWalletMaxVersion, nVersion); return true; }
 
     // Adds an encrypted key to the store, and saves it to disk.
@@ -633,8 +636,11 @@ public:
         return nChangeCached;
     }
 
-    void GetAmounts(int64& nGeneratedImmature, int64& nGeneratedMature, std::list<std::pair<CTxDestination, int64> >& listReceived,
+   void GetAmounts(int64& nGeneratedImmature, int64& nGeneratedMature, std::list<std::pair<CTxDestination, int64> >& listReceived,
                     std::list<std::pair<CTxDestination, int64> >& listSent, int64& nFee, std::string& strSentAccount) const;
+
+    void GetAmounts(std::list<std::pair<CTxDestination, int64> >& listReceived,
+                           std::list<std::pair<CTxDestination, int64> >& listSent, int64& nFee, std::string& strSentAccount) const;
 
     void GetAccountAmounts(const std::string& strAccount, int64& nGeneratedImmature, int64& nGeneratedMature, int64& nReceived,
                            int64& nSent, int64& nFee) const;
@@ -691,7 +697,7 @@ public:
 
     int64 GetTxTime() const;
     int GetRequestCount() const;
-
+    void AddSupportingTransactions(CTxDB& txdb);
     void AddSupportingTransactions();
 
     bool AcceptWalletTransaction(CTxDB& txdb, bool fCheckInputs=true);

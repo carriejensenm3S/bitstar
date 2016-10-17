@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_WALLETDB1_H
 #define BITCOIN_WALLETDB1_H
-
+#include "main.h"
 #include "db.h"
 #include "base58.h"
 

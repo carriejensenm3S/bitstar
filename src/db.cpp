@@ -7,7 +7,6 @@
 #include "net.h"
 #include "checkpoints.h"
 #include "util.h"
-#include "main.h"
 #include "kernel.h"
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
@@ -771,6 +770,26 @@ bool CTxDB::LoadBlockIndex()
     return true;
 }
 
+
+CBlockIndex static * InsertBlockIndex(uint256 hash)
+{
+    if (hash == 0)
+        return NULL;
+
+    // Return existing
+    map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.find(hash);
+    if (mi != mapBlockIndex.end())
+        return (*mi).second;
+
+    // Create new
+    CBlockIndex* pindexNew = new CBlockIndex();
+    if (!pindexNew)
+        throw runtime_error("LoadBlockIndex() : new CBlockIndex failed");
+    mi = mapBlockIndex.insert(make_pair(hash, pindexNew)).first;
+    pindexNew->phashBlock = &((*mi).first);
+
+    return pindexNew;
+}
 
 
 bool CTxDB::LoadBlockIndexGuts()

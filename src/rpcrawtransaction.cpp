@@ -18,6 +18,9 @@ using namespace boost;
 using namespace boost::assign;
 using namespace json_spirit;
 
+/** Retrieve a transaction (from memory pool, or from disk, if possible) */
+extern bool GetTransaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock, bool fAllowSlow);
+
 void ScriptPubKeyToJSON(const CScript& scriptPubKey, Object& out, bool fIncludeHex)
 {
     txnouttype type;
