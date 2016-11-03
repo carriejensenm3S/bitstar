@@ -14,12 +14,12 @@ extern int nStakeTargetSpacing;
 extern int nStakeMinAgeNew;
 
 
+
 unsigned int nProtocolMinStakeAgeSwitchTestTime     = 1402696581;   // minstake age switch start time GMT for testnet - change! changed
 unsigned int nProtocolMinStakeAgeSwitchTime         = 1403283600;   // minstake age switch start time GMT for production net - change! 20140610T1827 ! changed
+int nProtocolModifierSwitchHeight 			= 185000;
+int nProtocolModifierSwitchTestHeight 		= 185000;
 
-
-unsigned int nProtocolModifierSwitchHeight 			= 185000;
-unsigned int nProtocolModifierSwitchTestHeight 		= 185000;
 
 // Modifier interval: time to elapse before new modifier is computed
 // Set to 3-hour for production network and 20-minute for test network
@@ -27,6 +27,12 @@ unsigned int nProtocolModifierSwitchTestHeight 		= 185000;
 unsigned int nModifierInterval = MODIFIER_INTERVAL;
 unsigned int nModifierIntervalNew = MODIFIER_INTERVAL_NEW;
 
+
+bool IsProtocolMinStakeAgeChange(unsigned int nTimeCoinStake)
+{
+
+    return (nTimeCoinStake >= (fTestNet? nProtocolMinStakeAgeSwitchTestTime : nProtocolMinStakeAgeSwitchTime));
+}
 
 
 // Hard checkpoints of stake modifiers to ensure they are deterministic
@@ -134,14 +140,6 @@ static bool SelectBlockFromCandidates(
         printf("SelectBlockFromCandidates: selection hash=%s\n", hashBest.ToString().c_str());
     return fSelected;
 }
-
-
-bool IsProtocolMinStakeAgeChange(unsigned int nTimeCoinStake)
-{
-
-    return (nTimeCoinStake >= (fTestNet? nProtocolMinStakeAgeSwitchTestTime : nProtocolMinStakeAgeSwitchTime));
-}
-
 
 // Stake Modifier (hash modifier of proof-of-stake):
 // The purpose of stake modifier is to prevent a txout (coin) owner from

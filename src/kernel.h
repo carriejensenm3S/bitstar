@@ -3,28 +3,23 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef PPCOIN_KERNEL_H
 #define PPCOIN_KERNEL_H
+
 #include "main.h"
-
-extern unsigned int nModifierInterval;
-extern unsigned int nModifierIntervalNew;
-extern unsigned int nProtocolMinStakeAgeSwitchTestTime;
-extern unsigned int nProtocolMinStakeAgeSwitchTime;  
-extern unsigned int nProtocolModifierSwitchTestHeight;
-extern unsigned int nProtocolModifierSwitchTestHeight;
-
 
 // MODIFIER_INTERVAL: time to elapse before new modifier is computed
 static const unsigned int MODIFIER_INTERVAL = 6 * 60 * 60;
 static const unsigned int MODIFIER_INTERVAL_NEW = 1* 60; // new modifier interval 1 minute
 
 
-extern bool IsProtocolMinStakeAgeChange(unsigned int nTimeCoinStake);
+extern unsigned int nModifierInterval;
+extern unsigned int nModifierIntervalNew;
 
 // MODIFIER_INTERVAL_RATIO:
 // ratio of group interval length between the last group and the first group
 static const int MODIFIER_INTERVAL_RATIO = 3;
 
 
+bool IsProtocolMinStakeAgeChange(unsigned int nTimeCoinStake);
 
 // Compute the hash modifier for proof-of-stake
 bool ComputeNextStakeModifier(const CBlockIndex* pindexPrev, uint64& nStakeModifier, bool& fGeneratedStakeModifier);

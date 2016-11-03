@@ -8,7 +8,6 @@
 #include "net.h"
 #include "init.h"
 #include "util.h"
-#include "main.h"
 #include "ui_interface.h"
 #include "checkpoints.h"
 #include <boost/filesystem.hpp>
@@ -678,7 +677,7 @@ bool AppInit2()
     uiInterface.InitMessage(_("Loading block index..."));
     printf("Loading block index...\n");
     nStart = GetTimeMillis();
-    if (!LoadBlockIndex(false))
+    if (!LoadBlockIndex())
         return InitError(_("Error loading blkindex.dat"));
 
     // as LoadBlockIndex can take several minutes, it's possible the user

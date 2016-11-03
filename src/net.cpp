@@ -6,7 +6,6 @@
 #include "irc.h"
 #include "db.h"
 #include "net.h"
-#include "main.h"
 #include "init.h"
 #include "strlcpy.h"
 #include "addrman.h"

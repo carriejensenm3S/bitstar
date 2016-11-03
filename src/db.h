@@ -312,6 +312,11 @@ public:
 };
 
 
+
+
+
+
+
 /** Access to the transaction database (blkindex.dat) */
 class CTxDB : public CDB
 {

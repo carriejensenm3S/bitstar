@@ -1,6 +1,7 @@
 // Copyright (c) 2011 Vince Durham
 // Distributed under the MIT/X11 software license, see the accompanying
 // file license.txt or http://www.opensource.org/licenses/mit-license.php.
+
 #include "script.h"
 #include "auxpow.h"
 #include "init.h"
@@ -9,6 +10,8 @@ using namespace std;
 using namespace boost;
 
 unsigned char pchMergedMiningHeader[] = { 0xfa, 0xbe, 'm', 'm' } ;
+
+
 
 void RemoveMergedMiningHeader(vector<unsigned char>& vchAux)
 {
@@ -22,7 +25,7 @@ bool CAuxPow::Check(uint256 hashAuxBlock, int nChainID)
     if (nIndex != 0)
         return error("AuxPow is not a generate");
 
-    if (!fTestNet && parentBlockHeader.GetChainID() == nChainID)
+    if (!fTestNet && parentBlock.GetChainID() == nChainID)
         return error("Aux POW parent has our chain ID");
 
     if (vChainMerkleBranch.size() > 30)
@@ -34,7 +37,7 @@ bool CAuxPow::Check(uint256 hashAuxBlock, int nChainID)
     std::reverse(vchRootHash.begin(), vchRootHash.end()); // correct endian
 
     // Check that we are in the parent block merkle tree
-    if (CBlock::CheckMerkleBranch(GetHash(), vMerkleBranch, nIndex) != parentBlockHeader.hashMerkleRoot)
+    if (CBlock::CheckMerkleBranch(GetHash(), vMerkleBranch, nIndex) != parentBlock.hashMerkleRoot)
         return error("Aux POW merkle root incorrect");
 
     const CScript script = vin[0].scriptSig;
@@ -47,9 +50,6 @@ bool CAuxPow::Check(uint256 hashAuxBlock, int nChainID)
 
     CScript::const_iterator pc =
         std::search(script.begin(), script.end(), vchRootHash.begin(), vchRootHash.end());
-
-    if (pcHead == script.end())
-        return error("MergedMiningHeader missing from parent coinbase");
 
     if (pc == script.end())
         return error("Aux POW missing chain merkle root in parent coinbase");
@@ -114,19 +114,19 @@ CScript MakeCoinbaseWithAux(unsigned int nBits, unsigned int nExtraNonce, vector
 }
 
 
-void IncrementExtraNonceWithAux(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& nExtraNonce, vector<unsigned char>& vchAux)
+void IncrementExtraNonceWithAux(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& nExtraNonce, int64& nPrevTime, vector<unsigned char>& vchAux)
 {
     // Update nExtraNonce
-    static uint256 hashPrevBlock;
-    if (hashPrevBlock != pblock->hashPrevBlock)
+    int64 nNow = max(pindexPrev->GetMedianTimePast()+1, GetAdjustedTime());
+    if (++nExtraNonce >= 0x7f && nNow > nPrevTime+1)
     {
-        nExtraNonce = 0;
-        hashPrevBlock = pblock->hashPrevBlock;
+        nExtraNonce = 1;
+        nPrevTime = nNow;
     }
-    ++nExtraNonce;
 
     pblock->vtx[0].vin[0].scriptSig = MakeCoinbaseWithAux(pblock->nBits, nExtraNonce, vchAux);
     pblock->hashMerkleRoot = pblock->BuildMerkleTree();
 }
+
 
 

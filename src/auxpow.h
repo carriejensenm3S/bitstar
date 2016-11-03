@@ -21,8 +21,8 @@ public:
     // root must be present inside the coinbase
     std::vector<uint256> vChainMerkleBranch;
     // Index of chain in chains merkle tree
-    unsigned int nChainIndex;
-    CBlockHeader parentBlockHeader;
+    int nChainIndex;
+    CBlock parentBlock;
 
     IMPLEMENT_SERIALIZE
     (
@@ -33,14 +33,14 @@ public:
 
         // Always serialize the saved parent block as header so that the size of CAuxPow
         // is consistent.
-        nSerSize += SerReadWrite(s, parentBlockHeader, nType, nVersion, ser_action);
+        nSerSize += SerReadWrite(s, parentBlock, nType | SER_BLOCKHEADERONLY, nVersion, ser_action);
     )
 
     bool Check(uint256 hashAuxBlock, int nChainID);
 
     uint256 GetParentBlockHash()
     {
-        return parentBlockHeader.GetPoWHash();
+        return parentBlock.GetHash();
     }
 };
 
@@ -49,7 +49,7 @@ int ReadWriteAuxPow(Stream& s, const boost::shared_ptr<CAuxPow>& auxpow, int nTy
 {
     if (nVersion & BLOCK_VERSION_AUXPOW)
     {
-        return ::GetSerializeSize(*auxpow, nType, nVersion);
+       return ::GetSerializeSize(*auxpow, nType, nVersion);
     }
     return 0;
 }
@@ -82,3 +82,4 @@ int ReadWriteAuxPow(Stream& s, boost::shared_ptr<CAuxPow>& auxpow, int nType, in
 extern void RemoveMergedMiningHeader(std::vector<unsigned char>& vchAux);
 extern CScript MakeCoinbaseWithAux(unsigned int nBits, unsigned int nExtraNonce, std::vector<unsigned char>& vchAux);
 #endif
+

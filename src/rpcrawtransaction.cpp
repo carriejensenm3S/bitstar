@@ -18,9 +18,6 @@ using namespace boost;
 using namespace boost::assign;
 using namespace json_spirit;
 
-/** Retrieve a transaction (from memory pool, or from disk, if possible) */
-extern bool GetTransaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock, bool fAllowSlow);
-
 void ScriptPubKeyToJSON(const CScript& scriptPubKey, Object& out, bool fIncludeHex)
 {
     txnouttype type;
@@ -124,7 +121,7 @@ Value getrawtransaction(const Array& params, bool fHelp)
 
     CTransaction tx;
     uint256 hashBlock = 0;
-    if (!GetTransaction(hash, tx, hashBlock, false))
+    if (!GetTransaction(hash, tx, hashBlock))
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available about transaction");
 
     CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
@@ -566,7 +563,7 @@ Value sendrawtransaction(const Array& params, bool fHelp)
     // or in the memory pool:
     CTransaction existingTx;
     uint256 hashBlock = 0;
-    if (GetTransaction(hashTx, existingTx, hashBlock, false))
+    if (GetTransaction(hashTx, existingTx, hashBlock))
     {
         if (hashBlock != 0)
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("transaction already in block ")+hashBlock.GetHex());
@@ -580,7 +577,7 @@ Value sendrawtransaction(const Array& params, bool fHelp)
         if (!tx.AcceptToMemoryPool(txdb))
             throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "TX rejected");
 
-        SyncWithWallets1(tx, NULL, true);
+        SyncWithWallets(tx, NULL, true);
     }
     RelayTransaction(tx, hashTx);
 

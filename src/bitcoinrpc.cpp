@@ -10,7 +10,7 @@
 #include "base58.h"
 #include "bitcoinrpc.h"
 #include "db.h"
-
+#include "auxpow.h"
 #undef printf
 #include <boost/asio.hpp>
 #include <boost/asio/ip/v6_only.hpp>
@@ -254,7 +254,6 @@ static const CRPCCommand vRPCCommands[] =
     { "getaccount",             &getaccount,             false,  false },
     { "getaddressesbyaccount",  &getaddressesbyaccount,  true,   false },
     { "sendtoaddress",          &sendtoaddress,          false,  false },
-
     { "getreceivedbyaddress",   &getreceivedbyaddress,   false,  false },
     { "getreceivedbyaccount",   &getreceivedbyaccount,   false,  false },
     { "listreceivedbyaddress",  &listreceivedbyaddress,  false,  false },
@@ -282,6 +281,8 @@ static const CRPCCommand vRPCCommands[] =
     { "signmessage",            &signmessage,            false,  false },
     { "verifymessage",          &verifymessage,          false,  false },
     { "getwork",                &getwork,                true,   false },
+    { "getworkaux",             &getworkaux,             true,   false },
+    { "getauxblock",            &getauxblock,             true,   false },
     { "getworkex",              &getworkex,              true,   false },
     { "listaccounts",           &listaccounts,           false,  false },
     { "settxfee",               &settxfee,               false,  false },
@@ -916,7 +917,7 @@ void JSONRequest::parse(const Value& valRequest)
     if (valMethod.type() != str_type)
         throw JSONRPCError(RPC_INVALID_REQUEST, "Method must be a string");
     strMethod = valMethod.get_str();
-    if (strMethod != "getwork" && strMethod != "getblocktemplate")
+    if (strMethod != "getwork" && strMethod != "getblocktemplate" && strMethod != "getworkaux" && strMethod != "getauxblock")
         printf("ThreadRPCServer method=%s\n", strMethod.c_str());
 
     // Parse params
